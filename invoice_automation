@@ -19,6 +19,7 @@ dst_folder = "/Users/Admin/invoice/"
 # Move file if name starts with string 'invoice'
 pattern = src_folder + "/invoice*"
 for file in glob.iglob(pattern, recursive=True):
+
     # Extract file name form file path
     file_name = os.path.basename(file)
     shutil.move(file, dst_folder + file_name)
