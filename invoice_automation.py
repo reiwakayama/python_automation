@@ -1,3 +1,5 @@
+# Organize invoices in a new folder and flag if file size is > 5MB
+
 import glob
 import shutil 
 import os
