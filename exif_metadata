@@ -1,0 +1,21 @@
+import os
+from PIL import Image
+
+def remove_exif(folder_path):
+    count = 0
+    for filename in os.listdir(folder_path):
+        if filename.endswith('.jpg') or filename.endswith('.jpeg') or filename.endswith('.png'):
+            file_path = os.path.join(folder_path, filename)
+            image = Image.open(file_path)
+            data = list(image.getdata())
+            image_without_exif = Image.new(image.mode, image.size)
+            image_without_exif.putdata(data)
+            output_file_path = os.path.join(folder_path, f"without_exif_{filename}")
+            image_without_exif.save(output_file_path)
+            image.close()
+            image_without_exif.close()
+            count += 1
+    print(f"{count} image files processed.")
+
+# Example usage
+remove_exif("C:\\Users\\your\\folder\\path")
