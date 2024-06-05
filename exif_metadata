@@ -10,8 +10,7 @@ def remove_exif(folder_path):
             data = list(image.getdata())
             image_without_exif = Image.new(image.mode, image.size)
             image_without_exif.putdata(data)
-            output_file_path = os.path.join(folder_path, f"without_exif_{filename}")
-            image_without_exif.save(output_file_path)
+            image_without_exif.save(file_path)
             image.close()
             image_without_exif.close()
             count += 1
