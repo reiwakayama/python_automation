@@ -1,5 +1,5 @@
 """ in a group of 27 random people, what is the probability that there exists a month without anyones birthday """
-
+ 
 import numpy as np
 
 num_people = 27
