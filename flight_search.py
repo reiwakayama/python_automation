@@ -1,66 +1,46 @@
-import time
-import undetected_chromedriver as uc
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+import time
 
-def check_qatar_airways():
-    options = uc.ChromeOptions()
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--window-size=1920,1080")
-    # Comment headless to reduce detection risk
-    # options.add_argument("--headless")
-    options.add_argument(
-        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-    )
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+wait = WebDriverWait(driver, 20)
 
-    driver = uc.Chrome(options=options)
+driver.get("https://www.qatarairways.com/en-us/book.html")
 
-    try:
-        driver.get("https://www.qatarairways.com/en-us/homepage.html")
-        wait = WebDriverWait(driver, 20)
+# Accept cookies if present
+try:
+    cookie_btn = wait.until(EC.element_to_be_clickable((By.ID, "cookie-accept-all")))
+    cookie_btn.click()
+    print("Accepted cookies")
+except:
+    print("No cookie banner detected")
 
-        # Wait for search form to load (example, change selector if needed)
-        wait.until(EC.presence_of_element_located((By.ID, "search-flight-from")))
+def input_airport(label_text, airport_code):
+    print(f"Inputting {airport_code} into field labeled '{label_text}'")
 
-        # Fill "From" airport
-        from_input = driver.find_element(By.ID, "search-flight-from")
-        from_input.clear()
-        from_input.send_keys("HKG")
+    mat_label = wait.until(EC.presence_of_element_located(
+        (By.XPATH, f'//mat-label[text()="{label_text}"]')
+    ))
+    mat_form_field = mat_label.find_element(By.XPATH, "./ancestor::mat-form-field")
+    input_el = mat_form_field.find_element(By.CSS_SELECTOR, 'input[aria-label="Airport autocomplete"]')
 
-        # Fill "To" airport
-        to_input = driver.find_element(By.ID, "search-flight-to")
-        to_input.clear()
-        to_input.send_keys("ATL")
+    input_el.click()
+    input_el.clear()
+    input_el.send_keys(airport_code)
 
-        # Fill departure date
-        dep_input = driver.find_element(By.ID, "search-flight-departure-date")
-        dep_input.clear()
-        dep_input.send_keys("29/11/2025")  # format may need adjustment
+    options = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'mat-option')))
+    if options:
+        options[0].click()
+        print(f"Selected {airport_code} for {label_text}")
+    else:
+        print(f"No autocomplete options found for {label_text}")
 
-        # Select cabin class (Business)
-        cabin_select = driver.find_element(By.ID, "search-flight-cabin-class")
-        cabin_select.click()
-        # Choose Business option - this might require specific interaction
+input_airport("From", "DOH")
+input_airport("To", "LHR")
 
-        # Submit the search form - find and click search button
-        search_button = driver.find_element(By.ID, "search-flight-submit")
-        search_button.click()
-
-        # Wait for results page or confirmation element
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, ".results-container")))
-
-        print("✅ Search results loaded.")
-        print("Title:", driver.title)
-        print("URL:", driver.current_url)
-
-    except Exception as e:
-        print("❌ Qatar Error:", e)
-
-    finally:
-        driver.quit()
-
-if __name__ == "__main__":
-    check_qatar_airways()
+time.sleep(5)
+driver.quit()
