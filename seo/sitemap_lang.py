@@ -1,3 +1,5 @@
+# Check for pages in sitemap with page content not in Japanese
+
 import requests
 from bs4 import BeautifulSoup
 from langdetect import detect
