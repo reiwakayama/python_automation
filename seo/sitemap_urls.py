@@ -1,3 +1,5 @@
+# Get overview of pages included in the sitemap
+
 import requests
 from bs4 import BeautifulSoup
 from collections import defaultdict
