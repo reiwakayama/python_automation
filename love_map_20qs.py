@@ -1,4 +1,4 @@
-# Randomly pick 20 numbers between 1-60, 3x
+# Randomly pick 20 numbers between 1-60, 3x 
 
 import random
 r1 = 1
